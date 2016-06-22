@@ -248,7 +248,7 @@ Don't use this page directly, pass #symbolId to get redirected.
 <link rel=""stylesheet"" href=""../styles.css"">
 <script src=""../scripts.js""></script>
 </head><body class=""projectExplorerBody"">
-<div class=""tabChannel""><span class=""activeTab"">Project</span><a class=""inactiveTab"" href=""/#{0},namespaces"" target=""_top"">Namespaces</a></div>
+<div class=""tabChannel""><span class=""activeTab"">Project</span><a class=""inactiveTab"" href=""#{0},namespaces"" target=""_top"">Namespaces</a></div>
 ", projectTitle);
         }
 
@@ -263,7 +263,7 @@ Don't use this page directly, pass #symbolId to get redirected.
 <body class=""solutionExplorerBody"">
     <div>
         <div class=""note"">
-            Enter a type or member name or <a href=""/#q=assembly%20"" target=""_top"" class=""blueLink"" onclick=""populateSearchBox('assembly '); return false;"">filter the assembly list</a>.
+            Enter a type or member name or <a href=""#q=assembly%20"" target=""_top"" class=""blueLink"" onclick=""populateSearchBox('assembly '); return false;"">filter the assembly list</a>.
         </div>
     </div>
 <div id=""rootFolder"" style=""display: none;"" class=""folderTitle"">");
@@ -280,7 +280,7 @@ Don't use this page directly, pass #symbolId to get redirected.
 <link rel=""stylesheet"" href=""{0}styles.css"">
 <script src=""{0}scripts.js""></script>
 </head><body class=""namespaceExplorerBody"">
-<div class=""tabChannel""><a class=""inactiveTab"" href=""/#{1}"" target=""_top"">Project</a><span class=""activeTab"">Namespaces</span></div>
+<div class=""tabChannel""><a class=""inactiveTab"" href=""#{1}"" target=""_top"">Project</a><span class=""activeTab"">Namespaces</span></div>
 ", pathPrefix, assemblyName));
         }
 
@@ -293,7 +293,7 @@ Don't use this page directly, pass #symbolId to get redirected.
         {
             sb.AppendFormat(@"<!DOCTYPE html><html><head><title>Redirecting</title>
 <script src=""../scripts.js""></script>
-<script>initializeProjectIndex(""../#{0}"");</script>
+<script>initializeProjectIndex(""#{0}"");</script>
 </head><body></body></html>", assemblyName);
         }
 
@@ -316,7 +316,7 @@ Don't use this page directly, pass #symbolId to get redirected.
             foreach (var assemblyName in assemblyList)
             {
                 sb.AppendFormat(
-                  @"<a href=""/#{0},namespaces"" target=""_top""><div class=""resultItem""><div class=""resultLine"">{0}</div></div></a>", assemblyName);
+                  @"<a href=""#{0},namespaces"" target=""_top""><div class=""resultItem""><div class=""resultLine"">{0}</div></div></a>", assemblyName);
                 sb.AppendLine();
             }
 
@@ -334,7 +334,7 @@ Don't use this page directly, pass #symbolId to get redirected.
 <body onload=""onResultsLoad();"">
 <div id=""symbols"">
 <div class=""note"">
-Enter a type or member name or <a href=""/#q=assembly%20"" target=""_top"" class=""blueLink"" onclick=""populateSearchBox('assembly '); return false;"">filter the assembly list</a>.
+Enter a type or member name or <a href=""#q=assembly%20"" target=""_top"" class=""blueLink"" onclick=""populateSearchBox('assembly '); return false;"">filter the assembly list</a>.
 </div>
 <div class=""resultGroup"">
 ";
@@ -431,7 +431,7 @@ Enter a type or member name or <a href=""/#q=assembly%20"" target=""_top"" class
             var url = symbol.GetUrl();
             sb.AppendFormat("<a href=\"{0}\" target=\"s\"><div class=\"resultItem\" onClick=\"resultClick(this);\">", url);
             sb.Append("<div class=\"resultLine\">");
-            sb.AppendFormat("<img src=\"/content/icons/{0}\" height=\"16\" width=\"16\" />", GetGlyph(symbol) + ".png");
+            sb.AppendFormat("<img src=\"content/icons/{0}\" height=\"16\" width=\"16\" />", GetGlyph(symbol) + ".png");
             sb.AppendFormat("<div class=\"resultKind\">{0}</div>", symbol.Kind);
             sb.AppendFormat("<div class=\"resultName\">{0}</div>", Markup.HtmlEscape(symbol.Name));
             sb.AppendLine("</div>");

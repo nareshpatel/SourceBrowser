@@ -105,7 +105,7 @@ namespace Microsoft.SourceBrowser.HtmlGenerator
             foreach (var reference in assemblyNames)
             {
                 var externalIndex = this.SolutionGenerator.GetExternalAssemblyIndex(reference);
-                string url = "/#" + reference;
+                string url = "#" + reference;
                 if (externalIndex != -1)
                 {
                     url = "@" + externalIndex.ToString() + "@#" + reference;

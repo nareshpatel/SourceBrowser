@@ -213,7 +213,7 @@ namespace Microsoft.SourceBrowser.HtmlGenerator
 
                         foreach (var referencingAssembly in project.ReferencingAssemblies)
                         {
-                            string referenceHtml = Markup.GetProjectExplorerReference("/#" + referencingAssembly, referencingAssembly);
+                            string referenceHtml = Markup.GetProjectExplorerReference("#" + referencingAssembly, referencingAssembly);
                             lines.Add(referenceHtml);
                         }
 

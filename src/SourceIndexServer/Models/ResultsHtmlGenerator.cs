@@ -285,7 +285,7 @@ namespace Microsoft.SourceBrowser.SourceIndexServer.Models
             foreach (var assembly in query.ResultAssemblies)
             {
                 var url = assembly;
-                WriteLine("<a href=\"/#{0}\" target=\"_top\"><div class=\"resultItem\"><div class=\"resultLine\">{0}</div>", url.AssemblyName);
+                WriteLine("<a href=\".\\#{0}\" target=\"_top\"><div class=\"resultItem\"><div class=\"resultLine\">{0}</div>", url.AssemblyName);
                 var projectKey = url.ProjectKey;
                 if (projectKey >= 0)
                 {
@@ -386,7 +386,7 @@ namespace Microsoft.SourceBrowser.SourceIndexServer.Models
                 message = "No results found.";
             }
 
-            var url = string.Format("/#q={0}", Markup.UrlEncodeAndHtmlEscape(query.OriginalString));
+            var url = string.Format("#q={0}", Markup.UrlEncodeAndHtmlEscape(query.OriginalString));
             message = Markup.A(url, message, "_top");
 
             sb.AppendLine(Markup.Note(message));

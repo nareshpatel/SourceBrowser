@@ -2,11 +2,14 @@
 var currentResult = null;
 var useSolutionExplorer = /*USE_SOLUTION_EXPLORER*/true/*USE_SOLUTION_EXPLORER*/;
 var anchorSplitChar = ",";
-
+var baseWebsitePath = "/codebrowser"
 var externalUrlMap = [
     "http://referencesource.microsoft.com/",
     "http://source.roslyn.io/"
 ];
+
+var scripts = document.getElementsByTagName("script");
+var  src = scripts[scripts.length-1].src.slice(0,-10);
 
 var supportedFileExtensions = [
     "cs",
@@ -18,6 +21,17 @@ var supportedFileExtensions = [
     "props",
     "xaml"
 ];
+
+function getRelativePathName(path)
+{
+	var result = path;
+	if(!!path && path.startsWith(baseWebsitePath))
+	{
+		result = result.slice(baseWebsitePath.length);
+	}
+	
+	return result;
+}
 
 function redirectLocation(frame, newLocation) {
     if (frame.location.href == newLocation) {
@@ -136,18 +150,18 @@ function processHash() {
             var pathParts = potentialFile.split("/");
             if (pathParts.length > 1) {
                 if (hashParts.length == 3 && hashParts[2] == "references") {
-                    redirectLocation(n, "/" + pathParts[0] + "/R/" + hashParts[1] + ".html");
+                    redirectLocation(n, "./" + pathParts[0] + "/R/" + hashParts[1] + ".html");
                 }
                 else {
                     if (pathParts[0] != "MSBuildFiles" && pathParts[0] != "TypeScriptFiles") {
-                        redirectLocation(n, "/" + pathParts[0] + "/ProjectExplorer.html");
+                        redirectLocation(n, "./" + pathParts[0] + "/ProjectExplorer.html");
                     }
                 }
             }
         } else if (hashParts.length == 1 && potentialFile.indexOf("/") == -1) {
-            redirectLocation(n, "/" + potentialFile + "/ProjectExplorer.html");
+            redirectLocation(n, "./" + potentialFile + "/ProjectExplorer.html");
         } else if (hashParts.length == 2 && potentialFile.indexOf("/") == -1 && hashParts[1] == "namespaces") {
-            redirectLocation(n, "/" + potentialFile + "/namespaces.html");
+            redirectLocation(n, "./" + potentialFile + "/namespaces.html");
         }
     } else if (useSolutionExplorer) {
         redirectLocation(n, "solutionexplorer.html");
@@ -165,21 +179,21 @@ function onPageLoaded() {
 
     var query = document.location.search;
     if (query && query.slice(0, 3) == "?q=") {
-        redirectLocation(top, "/#" + query.slice(1));
+        redirectLocation(top, "./#" + query.slice(1));
         return;
     }
 
-    var pathname = document.location.pathname;
+    var pathname = getRelativePathName(document.location.pathname);
     if (pathname.toLowerCase().slice(0, 11) == "/index.html") {
-        redirectLocation(top, "/");
+        redirectLocation(top, "./");
         return;
     }
 
-    if (pathname.length > 1) {
+    /*if (pathname.length > 1) {
         setHash(pathname.slice(1) + location.hash);
-        redirectLocation(top, "/");
+        redirectLocation(top, "./");
         return;
-    }
+    }*/
 
     processHash();
 }
@@ -244,7 +258,7 @@ function i(lineNumberCount) {
         if (projectPathLink) {
             projectPathLink.onclick = function () {
                 var assemblyName = getAssemblyName();
-                top.n.location = "/" + assemblyName + "/ProjectExplorer.html";
+                top.n.location =  src+assemblyName + "/ProjectExplorer.html";
                 setHash(assemblyName);
                 return false;
             }
@@ -260,7 +274,7 @@ function i(lineNumberCount) {
 }
 
 function updateTopHashFromRightPane() {
-    var filePath = top.s.location.pathname.slice(1);
+    var filePath = top.s.location.pathname.slice(baseWebsitePath.length);
     filePath = getDisplayableFileName(filePath);
 
     var newHash = filePath;
@@ -334,7 +348,7 @@ function rewriteExternalLink(link) {
 
     if (link.hash.length == 17) {
         link.onclick = function () {
-            var filePath = top.s.location.pathname.slice(1);
+            var filePath = top.s.location.pathname.slice(baseWebsitePath.length);
             filePath = getDisplayableFileName(filePath);
             filePath = filePath + anchorSplitChar + this.hash.slice(1);
             setHash(filePath);
@@ -343,9 +357,9 @@ function rewriteExternalLink(link) {
     }
 
     if (endsWith(url, "/0000000000.html")) {
-        var filePath = top.s.location.pathname.slice(1);
+        var filePath = top.s.location.pathname.slice(baseWebsitePath.length);
         filePath = getDisplayableFileName(filePath);
-        filePath = "/#" + filePath + anchorSplitChar + link.id;
+        filePath = "./#" + filePath + anchorSplitChar + link.id;
         link.href = filePath;
         link.onclick = function () {
             redirectLocation(top.n, "/0000000000.html");
@@ -359,7 +373,7 @@ function rewriteSolutionExplorerLink(link) {
     var url = link.href;
     var fileName = trimFromEnd(url, ".html");
     var extension = getExtension(fileName);
-    var pathname = link.pathname;
+    var pathname = getRelativePathName(link.pathname);
 
     var setClassName = null;
     if (isSupportedExtension(extension) && !link.className) {
@@ -412,15 +426,15 @@ function ro() {
 
     setPageTitle(document.title);
 
-    var path = document.location.pathname;
+    var path = getRelativePathName(document.location.pathname);
     var symbolId = path.substring(path.lastIndexOf("/") + 1, path.lastIndexOf("."))
     for (var i = 0; i < document.links.length; i++) {
         var link = document.links[i];
         link.target = "s";
         link.className = "rL";
         link.onclick = function () {
-            var actual = top.s.document.location.pathname;
-            var expected = this.pathname;
+            var actual = getRelativePathName(top.s.document.location.pathname);
+            var expected = getRelativePathName(this.pathname);
             if (actual == expected || actual.substring(1) == expected) {
                 highlightOccurrence(this.hash.substring(1), symbolId);
             } else {
@@ -430,7 +444,7 @@ function ro() {
         };
     }
 
-    var displayableFileName = getDisplayableFileName(top.s.location.pathname.slice(1));
+    var displayableFileName = getDisplayableFileName(top.s.location.pathname.slice(baseWebsitePath.length));
     var newHash = displayableFileName + anchorSplitChar + symbolId + anchorSplitChar + "references";
     if (startsWithIgnoreCase(path, "/MSBuildProperties")) {
         newHash = "MSBuildProperty=" + symbolId;
@@ -508,7 +522,7 @@ function onDocumentOutlineLoad() {
             div.style.paddingBottom = "2px";
 
             var img = document.createElement('img');
-            img.src = '/content/icons/' + glyph + '.png';
+            img.src = 'content/icons/' + glyph + '.png';
             img.style.marginRight = '8px';
             img.style.verticalAlign = 'bottom';
             div.appendChild(img);
@@ -704,7 +718,7 @@ function generateLineNumbers(id, count) {
         return;
     }
 
-    var filePath = document.location.pathname.slice(1);
+    var filePath = document.location.pathname.slice(baseWebsitePath.length);
     filePath = getDisplayableFileName(filePath);
 
     var list = [];
@@ -804,16 +818,16 @@ function initializeHighlightReferences() {
 
 function addToolbar() {
     var documentOutlineButton = document.createElement('img');
-    documentOutlineButton.setAttribute('src', '/content/icons/DocumentOutline.png');
+    documentOutlineButton.setAttribute('src', src+'content/icons/DocumentOutline.png');
     documentOutlineButton.title = "Document Outline";
     documentOutlineButton.className = 'documentOutlineButton';
     documentOutlineButton.onclick = showDocumentOutline;
     document.body.appendChild(documentOutlineButton);
 
     var projectExplorerButton = document.createElement('img');
-    var projectExplorerIcon = '/content/icons/CSharpProjectExplorer.png';
+    var projectExplorerIcon = src+'content/icons/CSharpProjectExplorer.png';
     if (document.title.slice(document.title.length - 2) == "vb") {
-        projectExplorerIcon = '/content/icons/VBProjectExplorer.png';
+        projectExplorerIcon = src+'content/icons/VBProjectExplorer.png';
     }
 
     projectExplorerButton.setAttribute('src', projectExplorerIcon);
@@ -823,7 +837,7 @@ function addToolbar() {
     document.body.appendChild(projectExplorerButton);
 
     var namespaceExplorerButton = document.createElement('img');
-    namespaceExplorerButton.setAttribute('src', '/content/icons/NamespaceExplorer.png');
+    namespaceExplorerButton.setAttribute('src', src+'content/icons/NamespaceExplorer.png');
     namespaceExplorerButton.title = "Namespace Explorer";
     namespaceExplorerButton.className = 'namespaceExplorerButton';
     namespaceExplorerButton.onclick = showNamespaceExplorer;
@@ -831,12 +845,13 @@ function addToolbar() {
 }
 
 function showDocumentOutline() {
-    top.n.location = "/documentoutline.html";
+	//console.log(document.currentScript.src);
+    top.n.location = src + "documentoutline.html";
 }
 
 function showNamespaceExplorer() {
     var assemblyName = getAssemblyName();
-    var namespacesUrl = "/" + assemblyName + "/namespaces.html";
+    var namespacesUrl =  src +assemblyName+ "/namespaces.html";
     top.n.location = namespacesUrl;
     setHash(assemblyName + ",namespaces");
 }

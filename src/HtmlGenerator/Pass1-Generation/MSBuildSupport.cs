@@ -520,7 +520,7 @@ namespace Microsoft.SourceBrowser.HtmlGenerator
                             symbolId,
                             ReferenceKind.Instantiation);
 
-                        var url = string.Format("/{0}/A.html#{1}", assemblyName, symbolId);
+                        var url = string.Format("./{0}/A.html#{1}", assemblyName, symbolId);
                         var result = string.Format("<a href=\"{0}\" class=\"msbuildlink\">{1}</a>", url, text);
                         return result;
                     }

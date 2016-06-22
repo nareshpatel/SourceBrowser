@@ -186,7 +186,7 @@ namespace Microsoft.SourceBrowser.HtmlGenerator
             var displayName = GetDisplayName(destinationHtmlFilePath);
             var assemblyName = "TypeScriptFiles";
 
-            var url = "/#" + assemblyName + "/" + displayName.Replace('\\', '/');
+            var url = "#" + assemblyName + "/" + displayName.Replace('\\', '/');
             displayName = @"\\" + displayName;
 
             var file = string.Format("File: <a id=\"filePath\" class=\"blueLink\" href=\"{0}\" target=\"_top\">{1}</a><br/>", url, displayName);
